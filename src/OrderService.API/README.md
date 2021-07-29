@@ -8,7 +8,7 @@ This project is a fictif *OrderService* which exposes 2 functions:
 ## Step 1) Start rabbitmq on localhost
 
 ```
-docker-compose -f docker-compose-rabbitmq.yml up
+docker-compose -f docker-compose-infra.yml up
 ```
 The RabbitMQ UI is accessible at
 ```
@@ -105,6 +105,46 @@ the input structure is `OrderService.API.Models.NewOrderCommand` => we should pu
 We know the name and the structure of the message contract, there are `statusCode` and `statusText` so here the message we could publish in RabbitMQ
 
 ![Call service with rabbitmq UI](https://user-images.githubusercontent.com/1638594/127403732-04530c6d-f05c-4d4d-961b-e01061780106.png)
+
+
+# Prometheus metric
+
+Our *OrderService* exposes the metrics on `/metrics`
+These metrics are consumable by Prometheus. Here how it works:
+
+## Step 1) Run RabbitMQ and Prometheus on localhost
+
+```
+docker-compose -f docker-compose-infra.yml up
+```
+prometheus will be accessible on `localhost:9090`
+
+## Step 2) Run the OrderService **with Kestrel** (not IIS Express). 
+
+You can run/debug the *OrderService* From Visual Studio (don't forget to choose Kestrel) or from the command line
+
+```
+dotnet run
+```
+
+by default the service should be accessible on https://localhost:5001/swagger and the metrics should be accessible on https://localhost:5001/metrics
+
+Our local prometheus server will read the metric from https://host.docker.internal:5001/metrics
+
+so you will have to [map the DNS `host.docker.internal` to your `localhost`](https://stackoverflow.com/a/43541732) and make sure that this link works in your browser.
+
+![metrics](https://user-images.githubusercontent.com/1638594/127578693-ba142563-5442-45ef-97e1-6fdc606122ef.png)
+
+## Step 3) Try it out
+
+* Access to the prometheus interface via `http://localhost:9090/targets`
+* Make sure that prometheus can "see" its target (our *OrderService*)
+
+![prometheus targets](https://user-images.githubusercontent.com/1638594/127579581-93329846-7f85-42e4-a0eb-44c633bb5ddd.png)
+
+* Make some request to *OrderService* as usual
+* Navigate some metrics collected by Prometheus
+
 
 
 

@@ -1,5 +1,6 @@
 using MassTransit;
 using MassTransit.Definition;
+using MassTransit.PrometheusIntegration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using OrderService.API.Config;
 using OrderService.API.DAL;
 using OrderService.API.Models;
+using Prometheus;
 using Serilog;
 using System;
 using System.Reflection;
@@ -58,6 +60,7 @@ namespace OrderService.API
                         });
                     }
                     cfg.ConfigureEndpoints(ctx, new KebabCaseEndpointNameFormatter(true));
+                    cfg.UsePrometheusMetrics(serviceName: "order_service");
                 });
                 x.AddConsumers(Assembly.GetEntryAssembly()); //or x.AddConsumersFromNamespaceContaining<Startup>()
                 x.AddRequestClient<NewOrderCommand>(TimeSpan.FromSeconds(3));
@@ -92,6 +95,7 @@ namespace OrderService.API
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapMetrics();
                 endpoints.MapControllers();
             });
 
