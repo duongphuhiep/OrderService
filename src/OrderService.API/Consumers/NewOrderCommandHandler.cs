@@ -1,4 +1,5 @@
 using MassTransit;
+using OrderService.API.Config;
 using OrderService.API.DAL;
 using OrderService.API.Models;
 using System.Threading.Tasks;
@@ -16,8 +17,13 @@ namespace OrderService.API.Consumers
 
         public async Task Consume(ConsumeContext<NewOrderCommand> context)
         {
-            var resu = await orderRepository.AddNewOrder(context.Message).ConfigureAwait(false);
-            await context.RespondAsync(resu).ConfigureAwait(false);
+            var newOrder = await orderRepository.AddNewOrder(context.Message).ConfigureAwait(false);
+            await context.RespondAsync(newOrder).ConfigureAwait(false);
+            await context.Publish(new OrderAddedEvent
+            {
+                AddedBy = StaticAppId.Value,
+                OrderId = newOrder.Id
+            }).ConfigureAwait(false);
         }
     }
 }

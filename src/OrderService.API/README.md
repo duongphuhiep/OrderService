@@ -82,9 +82,9 @@ Each instance has its own (in-memory) database. When you call the *NewOrder* fun
 
 When you call *GetOrder* then it might return Error or not depend on the instance which executed your *GetOrder* request.
 
-# Project structure
+# This project structure is bad
 
-The project structure + naming is.. bad. In practice you should split it to 3 different projects
+The project structure + naming are.. bad. Remember this is only a showcase to demonstrate various things. In practice you should split this `OrderService.API` into 3 different projects, the 2 others are:
 
 * The Data Access Layer (`DAL` folder) should be on other project.
 * The data contract (`Models` folder) should be on other project.
