@@ -256,3 +256,5 @@ _dist
 **/windows-amd64.zip
 
 logs/
+_tmp/
+_drafts/

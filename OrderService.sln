@@ -5,15 +5,9 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{53F31AF7-F589-42D1-926B-45B3EE3B8A3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderService.API", "src\OrderService.API\OrderService.API.csproj", "{783DD22D-95B6-4643-AC51-B5F14FFE05C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderService.API", "src\OrderService.API\OrderService.API.csproj", "{783DD22D-95B6-4643-AC51-B5F14FFE05C8}"
 EndProject
 Global
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {0A6E04BD-A2C2-4342-B23A-C56FB073A325}
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
@@ -36,7 +30,13 @@ Global
 		{783DD22D-95B6-4643-AC51-B5F14FFE05C8}.Release|x86.ActiveCfg = Release|Any CPU
 		{783DD22D-95B6-4643-AC51-B5F14FFE05C8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{783DD22D-95B6-4643-AC51-B5F14FFE05C8} = {53F31AF7-F589-42D1-926B-45B3EE3B8A3D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0A6E04BD-A2C2-4342-B23A-C56FB073A325}
 	EndGlobalSection
 EndGlobal

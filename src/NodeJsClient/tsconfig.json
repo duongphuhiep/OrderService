@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "commonjs",
+    "rootDir": "src",
+    "outDir": "dist",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "lib": ["es6", "dom"],
+    "esModuleInterop": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "masstransit-rabbitmq/dist/bus.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

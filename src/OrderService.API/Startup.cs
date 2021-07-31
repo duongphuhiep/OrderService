@@ -38,6 +38,7 @@ namespace OrderService.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "OrderService.API", Version = "v1" });
                 c.CustomSchemaIds(t => t.FullName);
+                c.EnableAnnotations();
             });
 
             #region config MassTransit/Rabitmq

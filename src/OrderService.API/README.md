@@ -88,17 +88,17 @@ The project structure + naming are.. bad. Remember this is only a showcase to de
 
 * The Data Access Layer (`DAL` folder) should be on other project.
 * The data contract (`Models` folder) should be on other project.
-  * The data contract should be immutable interface (interface with getter only
+  * The data contract should be immutable interface (interface with getter only)
 
-# Service contract
+# Service contract and Service API documentation
 
 When you want to use/consume a (micro-)service, you must to know about its contract (what is the input / output structure, what is the exchange name on RabbitMQ which we have to use?)
 
-Our *OrderService* exposes a swagger interface. By looking at it you would be able to deduce How to call our service via rabbitmq.
+Our *OrderService* exposes a swagger interface which is used as a living documentation of the Micro-service. By looking at it you would be able to deduce How to call our service via Rabbitmq.
 
 For example: Here is the contract of the *NewOrder* function
 
-![NewOrder service contract](https://user-images.githubusercontent.com/1638594/127469913-27cb5259-51d8-4952-a968-abbbfb3f8c86.png)
+![NewOrder function contract](https://user-images.githubusercontent.com/1638594/127748110-9876f77d-1504-4be3-b9b1-9277837f6e80.png)
 
 the input structure is `OrderService.API.Models.NewOrderCommand` => we should publish the request to the exchange `OrderService.API.Models:NewOrderCommand` in RabbitMQ
 
@@ -106,6 +106,11 @@ We know the name and the structure of the message contract, there are `statusCod
 
 ![Call service with rabbitmq UI](https://user-images.githubusercontent.com/1638594/127403732-04530c6d-f05c-4d4d-961b-e01061780106.png)
 
+I believe that maintaining a swagger documentation is far better than maintaining a separated documentation in a Readme file or a confluence / wiki. There is 2 advantages:
+
+* The swagger documentation is alive. It evoles with your codes. If you refactor / rename or add more properties to the input output  structure then changes will automaticly appeared in the swagger interface. Or else, you will have to maintain your wiki or confluence document to make it synchronize with your actual code.
+
+* If for support reason, you have to call a micro-service (for example GetOrder) sometimes you have to call it in production to investigate some problem / bug for example. You can easily do so with Postman / Swagger interface. Or else you will have to develop an application to call your service. There is no easy tool allowing you to call the service AND GET THE RESPONSE with RabbitMQ.
 
 # Prometheus metric
 
