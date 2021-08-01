@@ -26,6 +26,8 @@ cd OrderService.API
 dotnet run
 ```
 
+You should be able to see the OrderService up and running at `https://localhost:5001/swagger`
+
 ## Step 3) Call (or consume) the service
 
 The following instruction will help you call the *NewOrder* function from our *OrderService*
@@ -49,7 +51,34 @@ You can publish the following message to this exchange in order to execute the *
 }
 ```
 
-Unfortunately this way we cannot see the response of the *NewOrder* function (at least I don't know how)
+#### How to see the response?
+
+Unfortunately there is no easy way to see the response of the *NewOrder* function from the RabbitMQ dashboard. If you really want to see the response here what you can do:
+
+1) Create a (fan-out) `debug_exchange` and a `debug_queue`, bind the `debug_exchange` to the `debug_queue`.
+
+![debug exchange and queue](https://user-images.githubusercontent.com/1638594/127785037-e95dea18-e74e-4a82-bdf8-c47f569e6c0b.png)
+
+2) when you publish the request, you can ask the micro-service to publish the response to the `debug_exchange`:
+
+```
+{
+  "responseAddress": "rabbitmq://localhost/debug_exchange",
+  "messageType": [
+    "urn:message:OrderService.API.Models:NewOrderCommand"
+  ],
+  "message": {
+    "statusCode": 4,
+    "statusText": "4"
+  }
+}
+```
+
+3) Now you can go to the `debug_queue` and get the response message
+
+![get response in debug_queue](https://user-images.githubusercontent.com/1638594/127785382-b62e95dd-b1dd-44ef-9366-fe33f6f72a81.png)
+
+
 
 ### Method 2: Use Postman (or Swagger)
 
@@ -134,9 +163,9 @@ dotnet run
 
 by default the service should be accessible on https://localhost:5001/swagger and the metrics should be accessible on https://localhost:5001/metrics
 
-Our local prometheus server will read the metric from https://host.docker.internal:5001/metrics
+Our local prometheus server will read the metric from https://host.docker.internal:5001/metrics (see the `prometheus-config.yml`)
 
-so you will have to [map the DNS `host.docker.internal` to your `localhost`](https://stackoverflow.com/a/43541732) and make sure that this link works in your browser.
+so you will have to [map the DNS `host.docker.internal` to `127.0.0.1`](https://stackoverflow.com/a/43541732) and **make sure that the following link works in your browser** (as in the screenshot)
 
 ![metrics](https://user-images.githubusercontent.com/1638594/127578693-ba142563-5442-45ef-97e1-6fdc606122ef.png)
 
@@ -150,6 +179,7 @@ so you will have to [map the DNS `host.docker.internal` to your `localhost`](htt
 * Make some request to *OrderService* as usual
 * Navigate some metrics collected by Prometheus
 
+![prometheus metric sample](https://user-images.githubusercontent.com/1638594/127786038-8b4d5fb3-bb44-43cb-b5cc-c09e4313ae52.png)
 
 
 
