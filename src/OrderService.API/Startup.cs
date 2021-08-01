@@ -90,6 +90,8 @@ namespace OrderService.API
 
             app.UseHttpsRedirection();
 
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseAuthorization();
@@ -101,6 +103,8 @@ namespace OrderService.API
             });
 
             app.UseSerilogRequestLogging();
+
+
         }
     }
 }
