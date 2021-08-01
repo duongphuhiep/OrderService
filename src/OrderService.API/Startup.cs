@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using OrderService.API.Config;
 using OrderService.API.DAL;
 using OrderService.API.Models;
+using OrderService.API.SignalrHubs;
 using Prometheus;
 using Serilog;
 using System;
@@ -40,6 +41,8 @@ namespace OrderService.API
                 c.CustomSchemaIds(t => t.FullName);
                 c.EnableAnnotations();
             });
+
+            services.AddSignalR();
 
             #region config MassTransit/Rabitmq
 
@@ -100,11 +103,10 @@ namespace OrderService.API
             {
                 endpoints.MapMetrics();
                 endpoints.MapControllers();
+                endpoints.MapHub<MainHub>("/mainhub");
             });
 
             app.UseSerilogRequestLogging();
-
-
         }
     }
 }

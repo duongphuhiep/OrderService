@@ -32,7 +32,15 @@ You should be able to see the OrderService up and running at `https://localhost:
 
 The following instruction will help you call the *NewOrder* function from our *OrderService*
 
-### Method 1: Use the RabbitMQ UI
+### Method 1: Use Postman (or Swagger)
+
+This is the simplest method to call the service and get the response.
+
+![Call service with Postman](https://user-images.githubusercontent.com/1638594/127404837-7d4a8d35-eb7d-44ba-b322-bfea38ae8ce5.png)
+
+Behind the scene, when `OrderController` received this (postman) request, it publish on RabbitMQ to execute the *NewOrder*. It will also return the response of our micro-service from RabbitMQ.
+
+### Method 2: Use directly the RabbitMQ UI
 
 ![Call service with rabbitmq UI](https://user-images.githubusercontent.com/1638594/127403732-04530c6d-f05c-4d4d-961b-e01061780106.png)
 
@@ -59,7 +67,7 @@ Unfortunately there is no easy way to see the response of the *NewOrder* functio
 
 ![debug exchange and queue](https://user-images.githubusercontent.com/1638594/127785037-e95dea18-e74e-4a82-bdf8-c47f569e6c0b.png)
 
-2) when you publish the request, you can ask the micro-service to publish the response to the `debug_exchange`:
+2) when you publish the request, you can ask our micro-service to publish the response to the `debug_exchange`:
 
 ```
 {
@@ -78,15 +86,11 @@ Unfortunately there is no easy way to see the response of the *NewOrder* functio
 
 ![get response in debug_queue](https://user-images.githubusercontent.com/1638594/127785382-b62e95dd-b1dd-44ef-9366-fe33f6f72a81.png)
 
+### Method 3: Write a nodejs application
 
+Checkout the `NodeJsClient` example to know how to call our micro-service from a NodeJs / TypeScript application.
 
-### Method 2: Use Postman (or Swagger)
-
-![Call service with Postman](https://user-images.githubusercontent.com/1638594/127404837-7d4a8d35-eb7d-44ba-b322-bfea38ae8ce5.png)
-
-Behind the scene, when `OrderController` received this (postman) request, it publish on RabbitMQ (as you did in the Method (1) to execute the *NewOrder*. It will also return the reply from RabbitMQ.
-
-## Step.. Bonus: Check if the previous step works!
+## Check if the previous step works!
 
 In previous step, you called the *NewOrder* function to create a new order. Now:
 
@@ -180,6 +184,12 @@ so you will have to [map the DNS `host.docker.internal` to `127.0.0.1`](https://
 * Navigate some metrics collected by Prometheus
 
 ![prometheus metric sample](https://user-images.githubusercontent.com/1638594/127786038-8b4d5fb3-bb44-43cb-b5cc-c09e4313ae52.png)
+
+# Database Viewer with SignalR
+
+Our *OrderService* is equiped a small web interface which display the database, accessible on `/index.html`.
+
+Each time the database got updated, our micro-service use SignalR to notify changes to this interface and keep it always up to date.
 
 
 

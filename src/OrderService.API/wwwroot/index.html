@@ -34,19 +34,49 @@
 
         </div>
     </section>
-    
+
     <script src="https://unpkg.com/vue@next"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.8/signalr.min.js" integrity="sha512-MvRLZM+Q3CFsTNLpNG/GQKhrTihTIPsjWbNgQW/USJZF0LNHYwOscTJY4QQ/NIg5BUrHZWpaN5FlsJbA2Soa3w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
+        const mainHub = new signalR.HubConnectionBuilder()
+            .withUrl("/mainhub")
+            .withAutomaticReconnect()
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+        async function start() {
+            try {
+                await mainHub.start();
+                console.log("SignalR MainHub Connected.");
+            } catch (err) {
+                console.log(err);
+                setTimeout(start, 5000);
+            }
+        };
+        mainHub.onclose(async () => {
+            await start();
+        });
+        start();
+
+
+
         const App = {
             data() {
                 return {
                     AllOrder: []
                 }
             },
+            methods: {
+                fetchData() {
+                    axios.get('/direct/order/all').then(r => {
+                        this.AllOrder = r.data;
+                    });
+                }
+            },
             mounted() {
-                axios.get('/direct/order/all').then(r => {
-                    this.AllOrder = r.data;
+                this.fetchData();
+                mainHub.on("DatabaseChanged", payload => {
+                    this.fetchData();
                 });
             }
         }
