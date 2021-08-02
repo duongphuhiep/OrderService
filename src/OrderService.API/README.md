@@ -92,15 +92,11 @@ Checkout the `NodeJsClient` example to know how to call our micro-service from a
 
 ## Check if the previous step works!
 
-In previous step, you called the *NewOrder* function to create a new order. Now:
+Our *OrderService* is equiped a small web interface which display the database. This interface is accessible on `/index.html`.
 
-1) This request will list all the Order you created by reading directly from the database
+![OrderService UI](https://user-images.githubusercontent.com/1638594/127823619-770b2cca-cda3-444b-9c33-b83a753cad03.png)
 
-![Get all order](https://user-images.githubusercontent.com/1638594/127406797-c67d11e8-b5d5-4340-b562-48c7a1e32849.png)
-
-2) This request will get information about 1 order. It uses rabbitmq to execute the *GetOrder* function and return the result. You could also execute this function from the RabbitMQ UI
-
-![Get 1 order](https://user-images.githubusercontent.com/1638594/127448954-0621541c-a7c2-45d5-8941-d8d3bc185f16.png)
+Each time the database get updated, our micro-service uses [SignalR](https://dotnet.microsoft.com/apps/aspnet/signalr) to notify changes to this interface and keep it always up to date (You don't have to refresh (F5) on the page)
 
 # Play More...
 
@@ -185,11 +181,6 @@ so you will have to [map the DNS `host.docker.internal` to `127.0.0.1`](https://
 
 ![prometheus metric sample](https://user-images.githubusercontent.com/1638594/127786038-8b4d5fb3-bb44-43cb-b5cc-c09e4313ae52.png)
 
-# Database Viewer with SignalR
-
-Our *OrderService* is equiped a small web interface which display the database, accessible on `/index.html`.
-
-Each time the database got updated, our micro-service use SignalR to notify changes to this interface and keep it always up to date.
 
 
 
