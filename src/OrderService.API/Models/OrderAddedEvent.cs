@@ -1,8 +1,8 @@
 namespace OrderService.API.Models
 {
-    public class OrderAddedEvent
+    public record OrderAddedEvent
     {
-        public string OrderId { get; set; }
-        public string AddedBy { get; set; }
+        public string OrderId { get; init; }
+        public string AddedBy { get; init; }
     }
 }

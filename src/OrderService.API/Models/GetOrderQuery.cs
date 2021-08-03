@@ -1,7 +1,7 @@
 namespace OrderService.API.Models
 {
-    public class GetOrderQuery
+    public record GetOrderQuery
     {
-        public string OrderId { get; set; }
+        public string OrderId { get; init; }
     }
 }

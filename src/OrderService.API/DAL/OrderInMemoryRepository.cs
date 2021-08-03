@@ -30,7 +30,7 @@ namespace OrderService.API.DAL
                 throw new ArgumentException("Bad status code");
             }
             string newId = Guid.NewGuid().ToString();
-            Order newOrderGenerated = new Order
+            Order newOrderGenerated = new()
             {
                 Id = newId,
                 DateCreated = DateTime.UtcNow,

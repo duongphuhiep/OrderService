@@ -1,8 +1,8 @@
 namespace OrderService.API.Models
 {
-    public class NewOrderCommand
+    public record NewOrderCommand
     {
-        public int StatusCode { get; set; }
-        public string StatusText { get; set; }
+        public int StatusCode { get; init; }
+        public string StatusText { get; init; }
     }
 }

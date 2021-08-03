@@ -19,7 +19,7 @@ namespace OrderService.API.Consumers
         {
             var newOrder = await orderRepository.AddNewOrder(context.Message).ConfigureAwait(false);
             await context.RespondAsync(newOrder).ConfigureAwait(false);
-            await context.Publish(new OrderAddedEvent
+            await context.Publish<OrderAddedEvent>(new()
             {
                 AddedBy = StaticAppId.Value,
                 OrderId = newOrder.Id

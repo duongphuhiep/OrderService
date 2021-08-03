@@ -2,11 +2,11 @@ using System;
 
 namespace OrderService.API.Models
 {
-    public class Order
+    public record Order
     {
-        public string Id { get; set; }
-        public DateTime DateCreated { get; set; }
-        public int StatusCode { get; set; }
-        public string StatusText { get; set; }
+        public string Id { get; init; }
+        public DateTime DateCreated { get; init; }
+        public int StatusCode { get; init; }
+        public string StatusText { get; init; }
     }
 }
