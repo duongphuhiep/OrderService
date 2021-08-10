@@ -63,6 +63,7 @@ namespace OrderService.API
                             hostConfig.Password(rabbitMqConfiguration?.Password ?? "");
                         });
                     }
+                    cfg.SendTopology.ConfigureErrorSettings = settings => settings.SetQueueArgument("x-message-ttl", 60000); //60000 * 60 * 24 * 2
                     cfg.ConfigureEndpoints(ctx, new KebabCaseEndpointNameFormatter(true));
                     cfg.UsePrometheusMetrics(serviceName: "order_service");
                 });

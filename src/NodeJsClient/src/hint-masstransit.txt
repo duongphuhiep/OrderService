@@ -1,0 +1,105 @@
+getResponse(request: TRequest)
+
+await this.sendEndpoint.send<TRequest>(request, x => {
+                x.requestId = requestId;
+                x.responseAddress = this.responseAddress;
+                x.messageType = this.requestType.toMessageType();
+            });
+			
+			
+await this.transport.send(this.exchange, this.routingKey, send);
+
+
+
+Trace: Hiep got callstack
+    at new MessageTypeDeserializer (C:\dev\MassTransit-JS\src\serialization.js:14:17)
+    at ReceiveEndpoint.handle (C:\dev\MassTransit-JS\src\receiveEndpoint.js:39:32)
+    at new RequestClient (C:\dev\MassTransit-JS\src\requestClient.js:21:25)
+    at MassTransitBus.requestClient (C:\dev\MassTransit-JS\src\bus.js:62:16)
+
+
+
+connect(this.hostAddress + '?heartbeat=60')
+
+connection.on('error', err => {
+                if (err.message !== 'Connection closing') {
+                    console.error('Connection error', err.message);
+                    _this.emit('error', err);
+                }
+            });
+connection.on('close', () => {
+                this.emit('disconnect', this.hostAddress);
+                this.scheduleReconnect();
+            });
+
+this.busEndpoint = this.receiveEndpoint(`bus-${Guid.create().toString()}`, config => {
+            config.options.durable = false;
+            config.options.autoDelete = true;
+            config.options.arguments = {'x-expires': 60000};
+        });
+
+process.on('SIGINT', async () => {
+        await bus.stop();
+    });
+
+let channel = await context.connection.createConfirmChannel();
+
+private async configureTopology(channel: ConfirmChannel) {
+        await channel.prefetch(this.options.prefetchCount, this.options.globalPrefetch);
+
+        await channel.assertExchange(this.queueName, 'fanout', this.options);
+        let queue = await channel.assertQueue(this.queueName, this.options);
+
+        await channel.bindQueue(this.queueName, this.queueName, '');
+
+        console.log('Queue:', queue.queue, 'MessageCount:', queue.messageCount, 'ConsumerCount:', queue.consumerCount);
+    }
+
+
+MessageContext {
+  messageId: 'c66e0000-fc61-b4a9-a454-08d9598c56c1',
+  requestId: '33bdc95c-b850-6d5b-2add-f270637d701e',
+  conversationId: 'c66e0000-fc61-b4a9-ade3-08d9598c56c1',
+  initiatorId: '33bdc95c-b850-6d5b-2add-f270637d701e',
+  sourceAddress: 'rabbitmq://localhost/order-service-apiconsumers-new-order-command-handler',
+  destinationAddress: 'amqp://localhost/bus-bea69c9c-e8dd-ba79-1b94-f32474fbc4c2?temporary=true',
+  messageType: [
+    'urn:message:MassTransit:Fault[[OrderService.API.Models:NewOrderCommand]]',
+    'urn:message:MassTransit:Fault'
+  ],
+  message: {
+    faultId: 'c66e0000-fc61-b4a9-ef4b-08d9598c56c0',
+    faultedMessageId: '2344b1d0-953b-bd50-48b5-36774387f35e',
+    timestamp: '2021-08-07T10:15:53.5414066Z',
+    exceptions: [ [Object] ],
+    host: {
+      machineName: 'CHATAIGNE',
+      processName: 'OrderService.API',
+      processId: 17112,
+      assembly: 'OrderService.API',
+      assemblyVersion: '1.0.0.0',
+      frameworkVersion: '5.0.8',
+      massTransitVersion: '7.2.1.0',
+      operatingSystemVersion: 'Microsoft Windows NT 10.0.19043.0'
+    },
+    faultMessageTypes: [ 'urn:message:OrderService.API.Models:NewOrderCommand' ],
+    message: { statusCode: -3, statusText: 'fromsrc' }
+  },
+  sentTime: '2021-08-07T10:15:53.5460436Z',
+  headers: {},
+  host: {
+    machineName: 'CHATAIGNE',
+    processName: 'OrderService.API',
+    processId: 17112,
+    assembly: 'OrderService.API',
+    assemblyVersion: '1.0.0.0',
+    frameworkVersion: '5.0.8',
+    massTransitVersion: '7.2.1.0',
+    operatingSystemVersion: 'Microsoft Windows NT 10.0.19043.0'
+  }
+}
+
+
+
+ {"message":{"statusCode":-3,"statusText":"fromsrc"},"messageId":"e6361374-db14-2e90-cdfd-7e9e2c62ae17","host":{"processId":13704,"processName":"C:\\Windows\\System32\\cmd.exe - pnpm  start","frameworkVersion":"v15.11.0","operatingSystemVersion":"win32","assembly":"C:\\dev\\MassTransit-JS\\demo\\index.js"},"requestId":"6fb56dbe-ddc9-cea1-b778-ba9351a53514","responseAddress":"amqp://localhost/bus-127868dd-0ba5-b45b-8688-f8e6f6adb10a?temporary=true","messageType":["urn:message:OrderService.API.Models:NewOrderCommand"],"destinationAddress":"amqp://localhost/OrderService.API.Models:NewOrderCommand"}
+			
