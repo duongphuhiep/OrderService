@@ -65,7 +65,12 @@ namespace OrderService.API
                       cfg.SendTopology.ConfigureErrorSettings = settings => settings.SetQueueArgument("x-message-ttl", 60000); //60000 * 60 * 24 * 2
                       cfg.ConfigureEndpoints(ctx, new KebabCaseEndpointNameFormatter(true));
                       cfg.UsePrometheusMetrics(serviceName: "order_service");
+
+                      cfg.ReceiveEndpoint(typeof(Psp.AtosBuildPaymentFormHandler).FullName, rep => rep.Consumer<Psp.AtosBuildPaymentFormHandler>());
+                      cfg.ReceiveEndpoint(typeof(Psp.PayzenBuildPaymentFormHandler).FullName, rep => rep.Consumer<Psp.PayzenBuildPaymentFormHandler>());
                   });
+                  //x.AddRequestClient<Psp.BuildPaymentForm>(new Uri($"exchange:{typeof(Psp.PayzenBuildPaymentFormHandler).FullName}"));
+                  //x.AddRequestClient<Psp.BuildPaymentForm>(new Uri($"exchange:{typeof(Psp.PayzenBuildPaymentFormHandler).FullName}"));
                   x.AddConsumers(Assembly.GetEntryAssembly()); //or x.AddConsumersFromNamespaceContaining<Startup>()
               })
             .AddGenericRequestClient()

@@ -181,9 +181,58 @@ so you will have to [map the DNS `host.docker.internal` to `127.0.0.1`](https://
 
 ![prometheus metric sample](https://user-images.githubusercontent.com/1638594/127786038-8b4d5fb3-bb44-43cb-b5cc-c09e4313ae52.png)
 
+# Polymorphism
 
+We'd like to make the exact same request and choose from 2 the differents queues so we will got different responses (of the same structure) depending on the queue we chosen.
 
+For example, if we send the following request
+```
+{
+  "messageType": [
+    "urn:message:OrderService.Psp:BuildPaymentForm"
+  ],
+  "message": {
+    "reference": "abc",
+    "amount": 1
+  }
+}
+```
+to the queue `OrderService.Psp.AtosBuildPaymentFormHandler`, then we would obtain the following response
+```
+{
+  "linkToPaymentPage": "https://atos.com/?ref=abc&amount=1",
+  "method": {
+    "method": "POST"
+  }
+}
+```
+and if we send this same request to the queue `OrderService.Psp.PayzenBuildPaymentFormHandler`, then we would obtain a different response (but same structure)
+```
+{
+  "linkToPaymentPage": "https://payzen.net/?id=abc&amountraw=1",
+  "method": {
+    "method": "GET"
+  }
+}
+```
 
+In order to acheive this effect
 
+## On the server side
 
+We registered 2 different consumers on 2 different queues. Both consumers take the same structure `BuildPaymentForm` as request and `BuildPaymentFormResponse` as response.
 
+```C#
+cfg.ReceiveEndpoint("OrderService.Psp.AtosBuildPaymentFormHandler", rep => rep.Consumer<Psp.AtosBuildPaymentFormHandler>());
+cfg.ReceiveEndpoint("OrderService.Psp.PayzenBuildPaymentFormHandler", rep => rep.Consumer<Psp.PayzenBuildPaymentFormHandler>());
+```
+
+## On the client side
+
+We can create a requester of `BuildPaymentForm` on a specific queue name (then get the response via the requester as usual)
+
+```C#
+string queueName = "OrderService.Psp.AtosBuildPaymentFormHandler";
+var requestClient = clientFactory.CreateRequestClient<BuildPaymentForm>(new Uri("queue:" + queueName));
+var resu = await requestClient.GetResponse<BuildPaymentFormResponse>(input).ConfigureAwait(false);
+```
