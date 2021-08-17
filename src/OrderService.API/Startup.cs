@@ -9,7 +9,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using OrderService.API.Config;
 using OrderService.API.DAL;
-using OrderService.API.Models;
 using OrderService.API.SignalrHubs;
 using Prometheus;
 using Serilog;
@@ -46,31 +45,30 @@ namespace OrderService.API
 
             #region config MassTransit/Rabitmq
 
-            services.AddMassTransit(x =>
-            {
-                x.UsingRabbitMq((ctx, cfg) =>
-                {
-                    if (IsRunningInContainer)
-                    {
-                        cfg.Host("rabbitmq");
-                    }
-                    else
-                    {
-                        var rabbitMqConfiguration = Configuration.GetSection("RabbitMqConfiguration").Get<RabbitMqConfiguration>();
-                        cfg.Host(rabbitMqConfiguration?.Host ?? "localhost", rabbitMqConfiguration?.Port ?? 5672, rabbitMqConfiguration?.VirtualHost ?? "/", hostConfig =>
-                        {
-                            hostConfig.Username(rabbitMqConfiguration?.UserName ?? "");
-                            hostConfig.Password(rabbitMqConfiguration?.Password ?? "");
-                        });
-                    }
-                    cfg.SendTopology.ConfigureErrorSettings = settings => settings.SetQueueArgument("x-message-ttl", 60000); //60000 * 60 * 24 * 2
-                    cfg.ConfigureEndpoints(ctx, new KebabCaseEndpointNameFormatter(true));
-                    cfg.UsePrometheusMetrics(serviceName: "order_service");
-                });
-                x.AddConsumers(Assembly.GetEntryAssembly()); //or x.AddConsumersFromNamespaceContaining<Startup>()
-                x.AddRequestClient<NewOrderCommand>(TimeSpan.FromSeconds(3));
-                x.AddRequestClient<GetOrderQuery>(TimeSpan.FromSeconds(3));
-            })
+            _ = services.AddMassTransit(x =>
+              {
+                  x.UsingRabbitMq((ctx, cfg) =>
+                  {
+                      if (IsRunningInContainer)
+                      {
+                          cfg.Host("rabbitmq");
+                      }
+                      else
+                      {
+                          var rabbitMqConfiguration = Configuration.GetSection("RabbitMqConfiguration").Get<RabbitMqConfiguration>();
+                          cfg.Host(rabbitMqConfiguration?.Host ?? "localhost", rabbitMqConfiguration?.Port ?? 5672, rabbitMqConfiguration?.VirtualHost ?? "/", hostConfig =>
+                          {
+                              hostConfig.Username(rabbitMqConfiguration?.UserName ?? "");
+                              hostConfig.Password(rabbitMqConfiguration?.Password ?? "");
+                          });
+                      }
+                      cfg.SendTopology.ConfigureErrorSettings = settings => settings.SetQueueArgument("x-message-ttl", 60000); //60000 * 60 * 24 * 2
+                      cfg.ConfigureEndpoints(ctx, new KebabCaseEndpointNameFormatter(true));
+                      cfg.UsePrometheusMetrics(serviceName: "order_service");
+                  });
+                  x.AddConsumers(Assembly.GetEntryAssembly()); //or x.AddConsumersFromNamespaceContaining<Startup>()
+              })
+            .AddGenericRequestClient()
             .AddMassTransitHostedService();
 
             #endregion config MassTransit/Rabitmq
