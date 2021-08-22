@@ -1,3 +1,4 @@
+using GreenPipes;
 using MassTransit;
 using MassTransit.Definition;
 using MassTransit.PrometheusIntegration;
@@ -62,10 +63,67 @@ namespace OrderService.API
                               hostConfig.Password(rabbitMqConfiguration?.Password ?? "");
                           });
                       }
-                      cfg.SendTopology.ConfigureErrorSettings = settings => settings.SetQueueArgument("x-message-ttl", 60000); //60000 * 60 * 24 * 2
                       cfg.ConfigureEndpoints(ctx, new KebabCaseEndpointNameFormatter(true));
-                      cfg.UsePrometheusMetrics(serviceName: "order_service");
 
+                      //set ttl of messages in the error queues and skipped queues
+                      var topologyConfiguration = Configuration.GetSection("TopologyConfiguration").Get<TopologyConfiguration>();
+                      cfg.SendTopology.ConfigureErrorSettings = settings => settings.SetQueueArgument("x-message-ttl", topologyConfiguration?.ErrorsTtl ?? 60 * 1000);
+                      cfg.SendTopology.ConfigureDeadLetterSettings = settings => settings.SetQueueArgument("x-message-ttl", topologyConfiguration?.DeadLettersTtl ?? 3600 * 1000 * 24);
+
+                      if (topologyConfiguration.KillSwitch != null)
+                      {
+                          cfg.UseKillSwitch(options =>
+                          {
+                              var ks = topologyConfiguration.KillSwitch;
+                              if (ks.TrackingPeriod.HasValue)
+                              {
+                                  options.SetTrackingPeriod(TimeSpan.FromMilliseconds(ks.TrackingPeriod.Value));
+                              }
+                              if (ks.ActivationThreshold.HasValue)
+                              {
+                                  options.SetActivationThreshold(ks.ActivationThreshold.Value);
+                              }
+                              if (ks.TripThreshold.HasValue)
+                              {
+                                  options.SetTripThreshold(ks.TripThreshold.Value);
+                              }
+                              if (ks.RestartTimeout.HasValue)
+                              {
+                                  options.SetRestartTimeout(TimeSpan.FromMilliseconds(ks.RestartTimeout.Value));
+                              }
+                              //options.SetExceptionFilter(ec =>
+                              //{
+                              //    //TODO
+                              //});
+                          });
+                      }
+
+                      if (topologyConfiguration.CircuitBreaker != null)
+                      {
+                          var cb = topologyConfiguration.CircuitBreaker;
+                          cfg.UseCircuitBreaker(options =>
+                          {
+                              if (cb.TrackingPeriod.HasValue)
+                              {
+                                  options.TrackingPeriod = TimeSpan.FromMilliseconds(cb.TrackingPeriod.Value);
+                              }
+                              if (cb.TripThreshold.HasValue)
+                              {
+                                  options.TripThreshold = cb.TripThreshold.Value;
+                              }
+                              if (cb.ActiveThreshold.HasValue)
+                              {
+                                  options.ActiveThreshold = cb.ActiveThreshold.Value;
+                              }
+                              if (cb.ResetInterval.HasValue)
+                              {
+                                  options.ResetInterval = TimeSpan.FromMilliseconds(cb.ResetInterval.Value);
+                              }
+                          });
+                      }
+
+
+                      cfg.UsePrometheusMetrics(serviceName: "order_service");
                       //polymorphisme: the same contract "BuildPaymentForm" is consumed on 2 different queues
                       cfg.ReceiveEndpoint(typeof(Psp.AtosBuildPaymentFormHandler).FullName, rep => rep.ConfigureConsumer<Psp.AtosBuildPaymentFormHandler>(ctx));
                       cfg.ReceiveEndpoint(typeof(Psp.PayzenBuildPaymentFormHandler).FullName, rep => rep.ConfigureConsumer<Psp.PayzenBuildPaymentFormHandler>(ctx));
