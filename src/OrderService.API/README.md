@@ -42,15 +42,15 @@ Behind the scene, when `OrderController` received this (postman) request, it pub
 
 ### Method 2: Use directly the RabbitMQ UI
 
-![Call service with rabbitmq UI](https://user-images.githubusercontent.com/1638594/127403732-04530c6d-f05c-4d4d-961b-e01061780106.png)
+![Call service with rabbitmq UI](https://user-images.githubusercontent.com/1638594/130364739-28ca4682-8d9e-4cd4-abd7-2762a817e582.png)
 
-When the `OrderService.API` application is started, it would create the exchange `OrderService.API.Models:NewOrderCommand`
+When the `OrderService.API` application is started, it would create the exchange `OrderService.Contracts:NewOrderCommand`
 
 You can publish the following message to this exchange in order to execute the *NewOrder* function
 ```
 {
   "messageType": [
-    "urn:message:OrderService.API.Models:NewOrderCommand"
+    "urn:message:OrderService.Contracts:NewOrderCommand"
   ],
   "message": {
     "statusCode": 4,
@@ -73,7 +73,7 @@ Unfortunately there is no easy way to see the response of the *NewOrder* functio
 {
   "responseAddress": "rabbitmq://localhost/debug_exchange",
   "messageType": [
-    "urn:message:OrderService.API.Models:NewOrderCommand"
+    "urn:message:OrderService.Contracts:NewOrderCommand"
   ],
   "message": {
     "statusCode": 4,
@@ -113,11 +113,10 @@ When you call *GetOrder* then it might return Error or not depend on the instanc
 
 # This project structure is bad
 
-The project structure + naming are.. bad. Remember this is only a showcase to demonstrate various things. In practice you should split this `OrderService.API` into 3 different projects, the 2 others are:
+For the sake of brevity The project structure + naming are.. bad. In practice you should split this `OrderService.API` into at least 3 different projects, the 2 others are:
 
 * The Data Access Layer (`DAL` folder) should be on other project.
-* The data contract (`Models` folder) should be on other project.
-  * The data contract should be immutable interface (interface with getter only)
+* The data contract should be on other project.
 
 # Service contract and Service API documentation
 
@@ -127,13 +126,13 @@ Our *OrderService* exposes a swagger interface which is used as a living documen
 
 For example: Here is the contract of the *NewOrder* function
 
-![NewOrder function contract](https://user-images.githubusercontent.com/1638594/127748110-9876f77d-1504-4be3-b9b1-9277837f6e80.png)
+![NewOrder function contract](https://user-images.githubusercontent.com/1638594/130366091-2ead33bd-a803-4605-a091-d45be070fe6b.png)
 
-the input structure is `OrderService.API.Models.NewOrderCommand` => we should publish the request to the exchange `OrderService.API.Models:NewOrderCommand` in RabbitMQ
+the input structure is `OrderService.Contracts.NewOrderCommand` => we should publish the request to the exchange `OrderService.Contracts:NewOrderCommand` in RabbitMQ
 
 We know the name and the structure of the message contract, there are `statusCode` and `statusText` so here the message we could publish in RabbitMQ
 
-![Call service with rabbitmq UI](https://user-images.githubusercontent.com/1638594/127403732-04530c6d-f05c-4d4d-961b-e01061780106.png)
+![Call service with rabbitmq UI](https://user-images.githubusercontent.com/1638594/130364739-28ca4682-8d9e-4cd4-abd7-2762a817e582.png)
 
 I believe that maintaining a swagger documentation is far better than maintaining a separated documentation in a Readme file or a confluence / wiki. There is 2 advantages:
 
@@ -189,7 +188,7 @@ For example, if we send the following request
 ```
 {
   "messageType": [
-    "urn:message:OrderService.Psp:BuildPaymentForm"
+    "urn:message:OrderService.Contracts.Psp:BuildPaymentForm"
   ],
   "message": {
     "reference": "abc",
@@ -197,7 +196,7 @@ For example, if we send the following request
   }
 }
 ```
-to the queue `OrderService.Psp.AtosBuildPaymentFormHandler`, then we would obtain the following response
+to the queue `OrderService.Contracts.Psp.AtosBuildPaymentFormHandler`, then we would obtain the following response
 ```
 {
   "linkToPaymentPage": "https://atos.com/?ref=abc&amount=1",
@@ -206,7 +205,7 @@ to the queue `OrderService.Psp.AtosBuildPaymentFormHandler`, then we would obtai
   }
 }
 ```
-and if we send this same request to the queue `OrderService.Psp.PayzenBuildPaymentFormHandler`, then we would obtain a different response (but same structure)
+and if we send this same request to the queue `OrderService.Contracts.Psp.PayzenBuildPaymentFormHandler`, then we would obtain a different response (but same structure)
 ```
 {
   "linkToPaymentPage": "https://payzen.net/?id=abc&amountraw=1",
@@ -223,16 +222,20 @@ In order to acheive this effect
 We registered 2 different consumers on 2 different queues. Both consumers take the same structure `BuildPaymentForm` as request and `BuildPaymentFormResponse` as response.
 
 ```C#
-cfg.ReceiveEndpoint("OrderService.Psp.AtosBuildPaymentFormHandler", rep => rep.Consumer<Psp.AtosBuildPaymentFormHandler>());
-cfg.ReceiveEndpoint("OrderService.Psp.PayzenBuildPaymentFormHandler", rep => rep.Consumer<Psp.PayzenBuildPaymentFormHandler>());
+cfg.ReceiveEndpoint("OrderService.Contracts.Psp.AtosBuildPaymentFormHandler", rep => rep.ConfigureConsumer<Psp.AtosBuildPaymentFormHandler>(ctx));
+cfg.ReceiveEndpoint("OrderService.Contracts.Psp.PayzenBuildPaymentFormHandler", rep => rep.ConfigureConsumer<Psp.PayzenBuildPaymentFormHandler>(ctx));
 ```
 
 ## On the client side
 
-We can create a requester of `BuildPaymentForm` on a specific queue name (then get the response via the requester as usual)
+We can create a requester of `BuildPaymentForm` on a specific queue name (then get the response via the requester as usual).
+
+[checkout full codes](master/src/OrderService.API/Controllers/Psp/BuildPaymentFormController%20.cs#L25-45)
 
 ```C#
-string queueName = "OrderService.Psp.AtosBuildPaymentFormHandler";
+string queueName = "OrderService.Contracts.Psp.AtosBuildPaymentFormHandler";
 var requestClient = clientFactory.CreateRequestClient<BuildPaymentForm>(new Uri("queue:" + queueName));
 var resu = await requestClient.GetResponse<BuildPaymentFormResponse>(input).ConfigureAwait(false);
 ```
+
+## Test with swagger

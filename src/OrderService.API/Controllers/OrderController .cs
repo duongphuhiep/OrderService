@@ -1,6 +1,6 @@
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
-using OrderService.API.Models;
+using OrderService.Contracts;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
 

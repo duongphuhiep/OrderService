@@ -1,6 +1,6 @@
 using System;
 
-namespace OrderService.API.Models
+namespace OrderService.Contracts
 {
     public record Order
     {

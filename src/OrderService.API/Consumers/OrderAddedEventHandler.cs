@@ -1,8 +1,8 @@
 using MassTransit;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using OrderService.API.Models;
 using OrderService.API.SignalrHubs;
+using OrderService.Contracts;
 using System.Threading.Tasks;
 
 namespace OrderService.API.Consumers

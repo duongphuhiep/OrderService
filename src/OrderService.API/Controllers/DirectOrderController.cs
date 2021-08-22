@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using OrderService.API.DAL;
-using OrderService.API.Models;
+using OrderService.Contracts;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;

@@ -1,7 +1,7 @@
 using System;
 using System.Net.Http;
 
-namespace OrderService.Psp
+namespace OrderService.Contracts.Psp
 {
     public record BuildPaymentFormResponse
     {

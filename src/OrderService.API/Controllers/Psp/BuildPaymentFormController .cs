@@ -1,5 +1,6 @@
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
+using OrderService.Contracts.Psp;
 using OrderService.Psp;
 using Swashbuckle.AspNetCore.Annotations;
 using System;

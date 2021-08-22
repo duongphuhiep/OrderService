@@ -1,4 +1,4 @@
-namespace OrderService.Psp
+namespace OrderService.Contracts.Psp
 {
     public record BuildPaymentForm
     {

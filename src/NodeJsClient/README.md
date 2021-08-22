@@ -13,10 +13,10 @@ Take a look at the contract of this function in the service documentation (swagg
 
 ![NewOrder function contract](https://user-images.githubusercontent.com/1638594/127748110-9876f77d-1504-4be3-b9b1-9277837f6e80.png)
 
-we know that the input type is `OrderService.API.Models.NewOrderCommand` so
-* the exchange we will have to use is `OrderService.API.Models:NewOrderCommand`, it is a convention
-* the RequestType is `new MessageType("NewOrderCommand", "OrderService.API.Models")`
-* the ResponseType is `new MessageType("Order", "OrderService.API.Models")`
+we know that the input type is `OrderService.Contracts.NewOrderCommand` so
+* the exchange we will have to use is `OrderService.Contracts:NewOrderCommand`, it is a convention
+* the RequestType is `new MessageType("NewOrderCommand", "OrderService.Contracts")`
+* the ResponseType is `new MessageType("Order", "OrderService.Contracts")`
 
 * the input structure can be described in typescript as following
 
@@ -42,7 +42,7 @@ We have all the information needed to create the Client:
 
 ```ts
 const client = bus.requestClient<NewOrderCommand, Order>({
-    exchange: "OrderService.API.Models:NewOrderCommand",
+    exchange: "OrderService.Contracts:NewOrderCommand",
     requestType: new MessageType("NewOrderCommand", messageNamespace),
     responseType: new MessageType("Order", messageNamespace),
 });

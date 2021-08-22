@@ -1,4 +1,5 @@
 using MassTransit;
+using OrderService.Contracts.Psp;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;

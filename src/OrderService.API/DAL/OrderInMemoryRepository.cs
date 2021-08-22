@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using OrderService.API.Models;
+using OrderService.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;

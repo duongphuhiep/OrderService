@@ -66,13 +66,16 @@ namespace OrderService.API
                       cfg.ConfigureEndpoints(ctx, new KebabCaseEndpointNameFormatter(true));
                       cfg.UsePrometheusMetrics(serviceName: "order_service");
 
-                      cfg.ReceiveEndpoint(typeof(Psp.AtosBuildPaymentFormHandler).FullName, rep => rep.Consumer<Psp.AtosBuildPaymentFormHandler>());
-                      cfg.ReceiveEndpoint(typeof(Psp.PayzenBuildPaymentFormHandler).FullName, rep => rep.Consumer<Psp.PayzenBuildPaymentFormHandler>());
+                      //polymorphisme: the same contract "BuildPaymentForm" is consumed on 2 different queues
+                      cfg.ReceiveEndpoint(typeof(Psp.AtosBuildPaymentFormHandler).FullName, rep => rep.ConfigureConsumer<Psp.AtosBuildPaymentFormHandler>(ctx));
+                      cfg.ReceiveEndpoint(typeof(Psp.PayzenBuildPaymentFormHandler).FullName, rep => rep.ConfigureConsumer<Psp.PayzenBuildPaymentFormHandler>(ctx));
                   });
+                  //you can declare requestClient one by one on a customized queue/exchange
                   //x.AddRequestClient<Psp.BuildPaymentForm>(new Uri($"exchange:{typeof(Psp.PayzenBuildPaymentFormHandler).FullName}"));
                   //x.AddRequestClient<Psp.BuildPaymentForm>(new Uri($"exchange:{typeof(Psp.PayzenBuildPaymentFormHandler).FullName}"));
                   x.AddConsumers(Assembly.GetEntryAssembly()); //or x.AddConsumersFromNamespaceContaining<Startup>()
               })
+            //or declare a generic one for all requestClient
             .AddGenericRequestClient()
             .AddMassTransitHostedService();
 

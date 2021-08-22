@@ -1,7 +1,7 @@
 using MassTransit;
 using OrderService.API.Config;
 using OrderService.API.DAL;
-using OrderService.API.Models;
+using OrderService.Contracts;
 using System.Threading.Tasks;
 
 namespace OrderService.API.Consumers
