@@ -134,7 +134,7 @@ We know the name and the structure of the message contract, there are `statusCod
 
 ![Call service with rabbitmq UI](https://user-images.githubusercontent.com/1638594/130364739-28ca4682-8d9e-4cd4-abd7-2762a817e582.png)
 
-I believe that maintaining a swagger documentation is far better than maintaining a separated documentation in a Readme file or a confluence / wiki. There is 2 advantages:
+I believe that maintaining a swagger documentation is far better than maintaining a separated documentation in a Readme file or a confluence / wiki. There are 2 advantages:
 
 * The swagger documentation is alive. It evoles with your codes. If you refactor / rename or add more properties to the input output  structure then changes will automaticly appeared in the swagger interface. Or else, you will have to maintain your wiki or confluence document to make it synchronize with your actual code.
 
