@@ -238,4 +238,28 @@ var requestClient = clientFactory.CreateRequestClient<BuildPaymentForm>(new Uri(
 var resu = await requestClient.GetResponse<BuildPaymentFormResponse>(input).ConfigureAwait(false);
 ```
 
-## Test with swagger
+# Circuit Breaker
+
+In this project sample, the [CircuitBreaker](https://masstransit-project.com/advanced/middleware/circuit-breaker.html#circuit-breaker) is configured as following
+
+```
+"TopologyConfiguration": {
+        "ErrorsTtl": 120000,
+        "DeadLettersTtl": 120000,
+        "CircuitBreaker": {
+            "TrackingPeriod": 10000,
+            "ActiveThreshold": 10,
+            "TripThreshold": 10,
+            "ResetInterval": 10000
+        }
+    },
+```
+
+It means that 
+* winthin the `TrackingPeriod` of 10 seconds,
+* we should get 10 messages (`ActiveThreshold`) before the circuit breaker start to evaluate the ratio.
+* if the 10% failure is reached (`TripThreshold`) then the service is temporary closed for 10 seconds (`ResetInterval`)
+
+In this example, We sent a order with a negative status every 0.5 sec. It cause a Fault on the server side ("Bad Order Status") for every 0.5 sec. The CircuitBreaker detected too much "faults" and trip (paused) for 10s each time. During this time, the client continue to send messages but get "TimeOut" as a response.
+
+![image](https://user-images.githubusercontent.com/1638594/130370354-d5ee2ec1-924c-4ba3-a8e1-43a7af196e43.png)

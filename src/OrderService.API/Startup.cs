@@ -72,6 +72,7 @@ namespace OrderService.API
 
                       if (topologyConfiguration.KillSwitch != null)
                       {
+                          Log.Logger.Information("*** config KillSwitch {KillSwitch}", topologyConfiguration.KillSwitch);
                           cfg.UseKillSwitch(options =>
                           {
                               var ks = topologyConfiguration.KillSwitch;
@@ -100,6 +101,7 @@ namespace OrderService.API
 
                       if (topologyConfiguration.CircuitBreaker != null)
                       {
+                          Log.Logger.Information("*** config CircuitBreaker {CircuitBreaker}", topologyConfiguration.CircuitBreaker);
                           var cb = topologyConfiguration.CircuitBreaker;
                           cfg.UseCircuitBreaker(options =>
                           {
