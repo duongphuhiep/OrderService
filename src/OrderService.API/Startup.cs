@@ -129,6 +129,7 @@ namespace OrderService.API
                       //polymorphisme: the same contract "BuildPaymentForm" is consumed on 2 different queues
                       cfg.ReceiveEndpoint(typeof(Psp.AtosBuildPaymentFormHandler).FullName, rep => rep.ConfigureConsumer<Psp.AtosBuildPaymentFormHandler>(ctx));
                       cfg.ReceiveEndpoint(typeof(Psp.PayzenBuildPaymentFormHandler).FullName, rep => rep.ConfigureConsumer<Psp.PayzenBuildPaymentFormHandler>(ctx));
+                      cfg.ReceiveEndpoint(typeof(Psp.CitronBuildPaymentFormHandler).FullName, rep => rep.ConfigureConsumer<Psp.CitronBuildPaymentFormHandler>(ctx));
                   });
                   //you can declare requestClient one by one on a customized queue/exchange
                   //x.AddRequestClient<Psp.BuildPaymentForm>(new Uri($"exchange:{typeof(Psp.PayzenBuildPaymentFormHandler).FullName}"));
