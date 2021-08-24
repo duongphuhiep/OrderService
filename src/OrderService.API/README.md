@@ -200,18 +200,14 @@ to the queue `OrderService.Contracts.Psp.AtosBuildPaymentFormHandler`, then we w
 ```
 {
   "linkToPaymentPage": "https://atos.com/?ref=abc&amount=1",
-  "method": {
-    "method": "POST"
-  }
+  "method": "POST"
 }
 ```
 and if we send this same request to the queue `OrderService.Contracts.Psp.PayzenBuildPaymentFormHandler`, then we would obtain a different response (but same structure)
 ```
 {
   "linkToPaymentPage": "https://payzen.net/?id=abc&amountraw=1",
-  "method": {
-    "method": "GET"
-  }
+  "method": "GET"
 }
 ```
 

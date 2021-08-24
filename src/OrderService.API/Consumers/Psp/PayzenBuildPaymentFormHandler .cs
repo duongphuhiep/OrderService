@@ -1,7 +1,6 @@
 using MassTransit;
 using OrderService.Contracts.Psp;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace OrderService.Psp
@@ -13,7 +12,7 @@ namespace OrderService.Psp
             await context.RespondAsync(new BuildPaymentFormResponse
             {
                 LinkToPaymentPage = new Uri($"https://payzen.net/?id={context.Message.Reference}&amountraw={context.Message.Amount}"),
-                Method = HttpMethod.Get
+                Method = "GET"
             }).ConfigureAwait(false);
         }
     }
