@@ -259,3 +259,16 @@ It means that
 In this example, We sent a order with a negative status every 0.5 sec. It cause a Fault on the server side ("Bad Order Status") for every 0.5 sec. The CircuitBreaker detected too much "faults" and trip (paused) for 10s each time. During this time, the client continue to send messages but get "TimeOut" as a response.
 
 ![image](https://user-images.githubusercontent.com/1638594/130370354-d5ee2ec1-924c-4ba3-a8e1-43a7af196e43.png)
+
+# Advance request/reply pattern
+
+Context:
+
+https://stackoverflow.com/questions/68918940/masstransit-how-to-make-advanced-request-reply-pattern/68922832#68922832
+
+
+![Advance Request Reply pattern](https://user-images.githubusercontent.com/1638594/130929265-74b50845-3896-4b86-8b29-acc1f78f06db.png)
+
+In the scope of this "OrderService.API" We couldn't really showcase this pattern. Because we will need at least 2 micro-services (Or you can try to run 2 different instance of the "OrderService.API")
+
+

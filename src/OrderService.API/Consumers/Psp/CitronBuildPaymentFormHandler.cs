@@ -1,4 +1,5 @@
 using MassTransit;
+using OrderService.API.Config;
 using OrderService.Contracts.Psp;
 using System;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace OrderService.Psp
         {
             await context.RespondAsync(new BuildPaymentFormResponse
             {
-                LinkToPaymentPage = new Uri($"https://citron.org/?id={context.Message.Reference}&amountraw={context.Message.Amount}"),
+                LinkToPaymentPage = new Uri($"https://citron.org/?app={StaticAppId.Value}id={context.Message.Reference}&amountraw={context.Message.Amount}"),
                 Method = "POST"
             }).ConfigureAwait(false);
         }

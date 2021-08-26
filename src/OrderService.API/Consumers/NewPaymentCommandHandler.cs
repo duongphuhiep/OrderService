@@ -10,11 +10,12 @@ namespace OrderService.API.Consumers
     {
         public async Task Consume(ConsumeContext<NewPaymentCommand> context)
         {
+            var pipe = context.CreateCopyContextPipe();
             await context.Send(new Uri("queue:" + typeof(Psp.CitronBuildPaymentFormHandler).FullName), new BuildPaymentForm
             {
                 Amount = context.Message.Amount,
                 Reference = context.Message.Reference
-            }).ConfigureAwait(false);
+            }, pipe).ConfigureAwait(false);
         }
     }
 }
