@@ -262,13 +262,29 @@ In this example, We sent a order with a negative status every 0.5 sec. It cause 
 
 # Advance request/reply pattern
 
-Context:
+## What?
+
+We send request to a micro-service but got the response from other micro-service.
+
+![async communication](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/architect-microservice-container-applications/media/communication-in-microservice-architecture/sync-vs-async-patterns-across-microservices.png)
+
+## Why?
+
+We favor [Asynchronous communication over Synchronous communication](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/architect-microservice-container-applications/media/communication-in-microservice-architecture/sync-vs-async-patterns-across-microservices.png)
+
+## How?
 
 https://stackoverflow.com/questions/68918940/masstransit-how-to-make-advanced-request-reply-pattern/68922832#68922832
 
+## In our example
 
 ![Advance Request Reply pattern](https://user-images.githubusercontent.com/1638594/130929265-74b50845-3896-4b86-8b29-acc1f78f06db.png)
 
 In the scope of this "OrderService.API" We couldn't really showcase this pattern. Because we will need at least 2 micro-services (Or you can try to run 2 different instance of the "OrderService.API")
+
+
+
+
+
 
 
