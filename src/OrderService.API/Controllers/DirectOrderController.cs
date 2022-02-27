@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using OrderService.API.DAL;
 using OrderService.Contracts;
 using Swashbuckle.AspNetCore.Annotations;
@@ -16,9 +17,12 @@ namespace OrderService.API.Controllers
     public class DirectOrderController : ControllerBase
     {
         private readonly IOrderRepository orderRepository;
-        public DirectOrderController(IOrderRepository orderRepository)
+        private readonly IConfiguration config;
+
+        public DirectOrderController(IOrderRepository orderRepository, IConfiguration config)
         {
             this.orderRepository = orderRepository;
+            this.config = config;
         }
 
         /// <summary>
@@ -46,6 +50,12 @@ namespace OrderService.API.Controllers
         public async Task<IEnumerable<Order>> GetAllOrder()
         {
             return await orderRepository.GetAll().ConfigureAwait(false);
+        }
+
+        [HttpGet("lemonurl")]
+        public string GetLemonUrl()
+        {
+            return config.GetValue<string>("App:LemonUrl");
         }
     }
 }

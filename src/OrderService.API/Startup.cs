@@ -1,14 +1,10 @@
-using GreenPipes;
 using MassTransit;
-using MassTransit.Definition;
-using MassTransit.PrometheusIntegration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using OrderService.API.Config;
 using OrderService.API.DAL;
 using OrderService.API.SignalrHubs;
 using Prometheus;
@@ -34,6 +30,7 @@ namespace OrderService.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Log.Information("===" + Configuration.GetValue<string>("App:LemonUrl"));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -44,8 +41,8 @@ namespace OrderService.API
 
             services.AddSignalR();
 
-            #region config MassTransit/Rabitmq
-
+            #region config MassTransit
+            /*
             _ = services.AddMassTransit(x =>
               {
                   x.UsingRabbitMq((ctx, cfg) =>
@@ -123,8 +120,6 @@ namespace OrderService.API
                               }
                           });
                       }
-
-
                       cfg.UsePrometheusMetrics(serviceName: "order_service");
                       //polymorphisme: the same contract "BuildPaymentForm" is consumed on 2 different queues
                       cfg.ReceiveEndpoint(typeof(Psp.AtosBuildPaymentFormHandler).FullName, rep => rep.ConfigureConsumer<Psp.AtosBuildPaymentFormHandler>(ctx));
@@ -139,12 +134,23 @@ namespace OrderService.API
             //or declare a generic one for all requestClient
             .AddGenericRequestClient()
             .AddMassTransitHostedService();
+            */
 
-            #endregion config MassTransit/Rabitmq
+            services.AddMediator(cfg =>
+            {
+                cfg.AddConsumers(Assembly.GetEntryAssembly());
+            })
+            .AddGenericRequestClient();
+
+            #endregion
 
             #region config DI (DAL / other services)
 
             services.AddSingleton(typeof(IOrderRepository), typeof(OrderInMemoryRepository));
+
+            #endregion
+
+            #region health check
 
             #endregion
         }
@@ -155,9 +161,11 @@ namespace OrderService.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "OrderService.API v1"));
+
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("v1/swagger.json", "OrderService.API v1"));
 
             app.UseHttpsRedirection();
 
@@ -175,6 +183,12 @@ namespace OrderService.API
             });
 
             app.UseSerilogRequestLogging();
+
+            #region health check
+
+
+
+            #endregion
         }
     }
 }
