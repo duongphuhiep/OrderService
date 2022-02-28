@@ -2,6 +2,8 @@ using App.Metrics;
 using App.Metrics.AspNetCore;
 using App.Metrics.Formatters.Prometheus;
 using MassTransit;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using OrderService.API.DAL;
 using OrderService.API.SignalrHubs;
 using Serilog;
@@ -68,6 +70,25 @@ builder.Services.AddSingleton(typeof(IOrderRepository), typeof(OrderInMemoryRepo
 builder.Services.AddHealthChecks();
 
 #endregion
+#region Service OpenTelemetry
+builder.Services.AddOpenTelemetryTracing(b => b
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddJaegerExporter()
+        .AddConsoleExporter()
+        //.AddOtlpExporter(opt =>
+        //{
+        //    opt.Endpoint = "ingest.lightstep.com:443";
+        //    opt.Headers = new Metadata
+        //    {
+        //        { "lightstep-access-token", "CWdBJZpaq5o/XZN91CvxkYviK6yXbBYksl5Wh1ekTkpig8NooFjkVD2feE3E5DLOw5Fk7JulzQq9C6T6LNgGEEGnbcCZE/Z7hknTRYcn"}
+        //    };
+        //    opt.Credentials = new SslCredentials();
+        //})
+        .AddSource("order-service.tracer")
+        .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName: "order-service", serviceVersion: "1.0.0"))
+    );
+#endregion
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -81,8 +102,10 @@ app.UseStaticFiles("/ui");
 app.UseAuthorization();
 app.MapControllers();
 app.MapHub<MainHub>("/mainhub");
+
 #region App Healthcheck
 app.MapHealthChecks("health");
 #endregion
+
 
 app.Run();
