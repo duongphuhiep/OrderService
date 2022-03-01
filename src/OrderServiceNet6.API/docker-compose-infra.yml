@@ -1,0 +1,16 @@
+version: "3.6"
+
+services:
+#  rabbitmq:
+#    image: masstransit/rabbitmq:latest
+#    ports:
+#     - "5672:5672"
+#     - "15672:15672"
+#     - "15692:15692"
+#
+#  prometheus:
+#    image: prom/prometheus
+#    ports:
+#     - "9090:9090"
+#    volumes:
+#     - ./prometheus-config.yml:/etc/prometheus/prometheus.yml

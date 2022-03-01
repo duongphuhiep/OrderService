@@ -18,13 +18,14 @@ Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .WriteTo.Console()
     .WriteTo.File(Path.Combine(Path.GetTempPath(), "OrderService.log"))
-    .CreateLogger();
+    .CreateBootstrapLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Host.UseSerilog();
+builder.Host.UseSerilog((context, services, configuration) => configuration
+                    .ReadFrom.Configuration(context.Configuration));
 
 #region Host Metrics
 
@@ -70,6 +71,7 @@ builder.Services.AddSingleton(typeof(IOrderRepository), typeof(OrderInMemoryRepo
 builder.Services.AddHealthChecks();
 
 #endregion
+
 #region Service OpenTelemetry
 builder.Services.AddOpenTelemetryTracing(b => b
         .AddAspNetCoreInstrumentation()
