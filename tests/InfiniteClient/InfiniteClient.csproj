@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -6,28 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\src\OrderService.API\Config\RabbitMqConfiguration.cs" Link="Config\RabbitMqConfiguration.cs" />
-    <Compile Include="..\..\src\OrderService.API\Contracts\GetOrderQuery.cs" Link="Contracts\GetOrderQuery.cs" />
-    <Compile Include="..\..\src\OrderService.API\Contracts\NewOrderCommand.cs" Link="Contracts\NewOrderCommand.cs" />
-    <Compile Include="..\..\src\OrderService.API\Contracts\Order.cs" Link="Contracts\Order.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="7.3.1" />
-    <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-    <PackageReference Include="Serilog" Version="2.10.0" />
+    <PackageReference Include="Serilog" Version="2.11.0" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="4.2.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
     <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Contracts\" />
-    <Folder Include="Config\" />
   </ItemGroup>
 </Project>

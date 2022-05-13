@@ -69,7 +69,6 @@ namespace InfiniteClient
                         });
                     })
                     //or declare a generic one for all requestClient
-                    .AddGenericRequestClient()
                     .AddMassTransitHostedService()
                     ;
 

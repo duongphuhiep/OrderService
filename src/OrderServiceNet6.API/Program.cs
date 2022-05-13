@@ -55,9 +55,7 @@ builder.Services.AddEndpointsApiExplorer()
 builder.Services.AddMediator(cfg =>
 {
     cfg.AddConsumers(Assembly.GetEntryAssembly());
-})
-.AddGenericRequestClient();
-
+});
 #endregion
 
 #region Services Application
